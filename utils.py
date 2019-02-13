@@ -26,17 +26,17 @@ def gen_data(network=defaultdict(set)):
 
 
 def pplot(pdict, pembs, name='mammal'):
-    fig = plt.figure(figsize=(10, 10));
-    ax = plt.gca();
+    fig = plt.figure(figsize=(10, 10))
+    ax = plt.gca()
     ax.cla()
-    ax.set_xlim((-1.1, 1.1));
+    ax.set_xlim((-1.1, 1.1))
     ax.set_ylim((-1.1, 1.1))
     ax.add_artist(plt.Circle((0, 0), 1., color='black', fill=False))
     for w, i in pdict.iteritems():
         c0, c1 = pembs[i]
         ax.plot(c0, c1, 'o', color='y')
         ax.text(c0 + .01, c1 + .01, w, color='b')
-    fig.savefig('data/' + name + '.png', dpi=fig.dpi);  # plt.show()
+    fig.savefig('data/' + name + '.png', dpi=fig.dpi)  # plt.show()
 
 
 class PoincareBase(object):
