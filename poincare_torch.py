@@ -16,7 +16,7 @@ class PoincareTorch(PoincareBase):
 
     def proj(self, x):
         norm = x.norm(p=2, dim=1).unsqueeze(1)
-        norm[norm < 1] = 1;
+        norm[norm < 1] = 1
         norm[norm >= 1] += self.eps
         return x.div(norm)
 
@@ -35,7 +35,7 @@ class PoincareTorch(PoincareBase):
         for epoch in range(self.num_iter):
             print(epoch)
             random.shuffle(self.pdata)
-            r = 1. * epoch / self.num_iter;
+            r = 1. * epoch / self.num_iter
             lr = (1 - r) * self.lr1 + r * self.lr2
             for w1, w2 in self.pdata:
                 i1, i2 = self.pdict[w1], self.pdict[w2]
