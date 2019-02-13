@@ -1,7 +1,7 @@
 from distutils.core import setup
 
 setup(
-    name='Poincare',
+    name='poincare',
     version='0.1',
     packages=['.'],
     license='Creative Commons Attribution-Noncommercial-Share Alike license',
