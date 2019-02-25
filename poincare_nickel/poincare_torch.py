@@ -25,10 +25,8 @@ class PoincareTorch(PoincareBase):
 
     def dists(self, u, v):
         uu, uv, vv = u.norm(dim=1) ** 2, u.mm(v.t()), v.norm(dim=1) ** 2
-        alpha, beta = (1 - uu).clamp(min=self.eps), (1 - vv).clamp(
-            min=self.eps)
-        gamma = (1 + 2 * (uu + vv - 2 * uv) / alpha / beta).clamp(
-            min=1 + self.eps)
+        alpha, beta = (1 - uu).clamp(min=self.eps), (1 - vv).clamp(min=self.eps)
+        gamma = (1 + 2 * (uu + vv - 2 * uv) / alpha / beta).clamp(min=1 + self.eps)
         return self.acosh(gamma)
 
     def train(self):  # LEFT SAMPLING
@@ -41,18 +39,13 @@ class PoincareTorch(PoincareBase):
                 i1, i2 = self.pdict[w1], self.pdict[w2]
                 u = Variable(self.pembs[i1].unsqueeze(0), requires_grad=True)
                 v = Variable(self.pembs[i2].unsqueeze(0), requires_grad=True)
-                sp = torch.from_numpy(np.random.randint(0, len(self.pdict),
-                                                        size=(self.num_negs,)))
+                sp = torch.from_numpy(np.random.randint(0, len(self.pdict), size=(self.num_negs,)))
                 negs = Variable(self.pembs[sp], requires_grad=True)
-                loss = -torch.log(torch.exp(-self.dists(u, v)) / torch.exp(
-                    -self.dists(u, negs)).sum())
+                loss = -torch.log(torch.exp(-self.dists(u, v)) / torch.exp(-self.dists(u, negs)).sum())
                 loss.backward()
-                self.pembs[sp] -= lr * (((1 - negs.norm(
-                    dim=1) ** 2) ** 2) / 4.).data.unsqueeze(1) * negs.grad.data
-                self.pembs[i1] -= lr * (
-                            ((1 - u.norm() ** 2) ** 2) / 4.).data * u.grad.data
-                self.pembs[i2] -= lr * (
-                            ((1 - v.norm() ** 2) ** 2) / 4.).data * v.grad.data
+                self.pembs[sp] -= lr * (((1 - negs.norm(dim=1) ** 2) ** 2) / 4.).data.unsqueeze(1) * negs.grad.data
+                self.pembs[i1] -= lr * (((1 - u.norm() ** 2) ** 2) / 4.).data * u.grad.data
+                self.pembs[i2] -= lr * (((1 - v.norm() ** 2) ** 2) / 4.).data * v.grad.data
                 self.pembs = self.proj(self.pembs)
         pplot(self.pdict, self.pembs, 'mammal_torch')
 

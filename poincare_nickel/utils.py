@@ -5,6 +5,9 @@ import matplotlib.pyplot as plt
 from collections import defaultdict
 from nltk.corpus import wordnet as wn
 from functools import reduce
+import pandas as pd
+import numpy as np
+import os
 
 plt.style.use('ggplot')
 
@@ -39,17 +42,26 @@ def pplot(pdict, pembs, name='mammal'):
     fig.savefig('data/' + name + '.png', dpi=fig.dpi)  # plt.show()
 
 
+def fetch_data(relations_path):
+    _, ext = os.path.splitext(relations_path)
+    if ext == '.tsv':
+        return pd.read_csv(relations_path, sep='\t')
+    elif ext == 'csv':
+        return pd.read_csv(relations_path)
+    else:
+        raise NotImplementedError("Only .tsv and .csv files are supported.")
+
+
 class PoincareBase(object):
     def __init__(self, num_iter=10, num_negs=10, lr1=0.2, lr2=0.01,
-                 dp='data/mammal_subtree.tsv'):  # dim=2
+                 relations_path='data/mammal_subtree.tsv'):  # dim=2
         self.dim = 2
         self.num_iter = num_iter
         self.num_negs = num_negs
         self.lr1, self.lr2 = lr1, lr2
-        self.pdata = map(lambda l: l.split('\t'),
-                         filter(None, open(dp).read().split('\n')))
-        self.pdict = {w: i for i, w in
-                      enumerate(set(reduce(operator.add, self.pdata)))}
+        self.rels_df = fetch_data(relations_path)
+        self.pdata = np.asarray([[x, y] for x, y in self.rels_df.values])
+        self.pdict = {w: i for i, w in enumerate(set(self.pdata.flatten()))}
 
     def dists(self, u, v): pass
 

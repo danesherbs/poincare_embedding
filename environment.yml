@@ -1,0 +1,9 @@
+name: env_poincare_embedding
+
+dependencies:
+  - python>=3.6
+  # Packages
+  - pip
+  - pip:
+    - pytorch
+    - torchvision
